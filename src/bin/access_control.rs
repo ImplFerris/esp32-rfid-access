@@ -8,6 +8,7 @@ use esp_backtrace as _;
 use esp_hal::{
     delay::Delay,
     gpio::{Level, Output},
+    ledc::Ledc,
     prelude::*,
     spi::{
         master::{Config, Spi},
@@ -76,6 +77,9 @@ async fn main(_spawner: Spawner) {
     let rc522 = Mfrc522::new(spi_interface).init().unwrap();
     let mut rfid = lib::rfid::Rfid::new(rc522);
 
+    let ledc = Ledc::new(peripherals.LEDC);
+    let mut servo = lib::servo::Motor::new(ledc, peripherals.GPIO27);
+
     loop {
         display.wait_for_auth().await;
         if rfid.select_card().await {
@@ -84,9 +88,13 @@ async fn main(_spawner: Spawner) {
                 display.acccess_denied().await;
             } else {
                 display.acccess_granted().await;
+
+                servo.open_door().await;
             }
             rfid.halt_state().unwrap();
             Timer::after_secs(2).await;
         }
+        servo.close_door().await;
+        Timer::after_millis(50).await;
     }
 }

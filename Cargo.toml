@@ -25,6 +25,7 @@ ssd1306 = { git = "https://github.com/rust-embedded-community/ssd1306.git", rev 
     "async",
 ] }
 embedded-graphics = "0.8.1"
+embedded-hal = "1.0.0"
 
 [profile.dev]
 # Rust debug is too slow.
