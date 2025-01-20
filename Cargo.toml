@@ -3,6 +3,10 @@ name = "esp32-rfid-access"
 version = "0.1.0"
 edition = "2021"
 
+[features]
+oled = []
+servo = []
+
 [dependencies]
 esp-backtrace = { version = "0.14.2", features = [
     "esp32",

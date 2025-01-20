@@ -18,7 +18,6 @@ pub const SERVO_PIN: u8 = 27;
 
 impl<'a> Motor<'a> {
     pub fn new(ledc: Ledc<'static>, servo: GpioPin<SERVO_PIN>) -> Self {
-        // let mut hstimer0 = ledc.timer::<HighSpeed>(timer::Number::Timer0);
         let hstimer0 = super::mk_static!(
             timer::Timer<'_, HighSpeed>,
             ledc.timer::<HighSpeed>(timer::Number::Timer0)

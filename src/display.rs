@@ -8,6 +8,9 @@ use embedded_graphics::{
     primitives::{PrimitiveStyleBuilder, Rectangle},
 };
 use esp_hal::i2c::master::I2c;
+use ssd1306::mode::DisplayConfigAsync;
+use ssd1306::prelude::DisplayRotation;
+use ssd1306::I2CDisplayInterface;
 use ssd1306::{
     mode::BufferedGraphicsModeAsync, prelude::I2CInterface, size::DisplaySize128x64, Ssd1306Async,
 };
@@ -23,7 +26,14 @@ pub struct Display<'a> {
 }
 
 impl<'a> Display<'a> {
-    pub fn new(display_module: DisplayType<'a>) -> Self {
+    pub async fn new(i2c: esp_hal::i2c::master::I2c<'static, esp_hal::Async>) -> Self {
+        let interface = I2CDisplayInterface::new(i2c);
+        // initialize the display
+        let mut display_module =
+            Ssd1306Async::new(interface, DisplaySize128x64, DisplayRotation::Rotate0)
+                .into_buffered_graphics_mode();
+        display_module.init().await.unwrap();
+
         Self { display_module }
     }
 
